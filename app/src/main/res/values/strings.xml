@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">FinanceControllApp</string>
+    <string name="title_activity_bill_list">BillList</string>
+</resources>
