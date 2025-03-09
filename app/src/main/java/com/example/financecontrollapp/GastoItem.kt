@@ -28,6 +28,7 @@ fun GastoItem(
     onEdit:() -> Unit
 ){
     val nome = lista[position].nome
+    val valor = lista[position].valor;
 
     Card(
         modifier = Modifier
@@ -39,7 +40,13 @@ fun GastoItem(
             modifier = Modifier
                 .padding(5.dp)
         ) {
-            Text(text = nome.toString())
+            Column(
+                modifier = Modifier
+                    .padding(5.dp)
+            ) {
+                Text(text = nome.toString())
+                Text(text = valor.toString())
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),

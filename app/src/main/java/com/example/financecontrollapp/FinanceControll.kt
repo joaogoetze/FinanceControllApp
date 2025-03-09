@@ -2,9 +2,12 @@ package com.example.financecontrollapp
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,12 +39,13 @@ fun FinanceControll() {
     var isDialogOpen by remember { mutableStateOf(false) }
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     var editingName by remember { mutableStateOf("") }
+    var editingValor by remember { mutableStateOf("") }
 
     val lista = remember {
         mutableStateListOf(
-            Gasto(nome = "Aluguel"),
-            Gasto(nome = "Carro"),
-            Gasto(nome = "Internet")
+            Gasto(nome = "Aluguel", valor = 2000.00),
+            Gasto(nome = "Carro", valor = 500.00),
+            Gasto(nome = "Internet", valor = 129.90)
         )
     }
 
@@ -55,6 +59,7 @@ fun FinanceControll() {
                     editDialogOpen = true
                     editingIndex = position
                     editingName = lista[position].nome.toString()
+                    editingValor = lista[position].valor.toString()
                 }
             )
         }
@@ -66,25 +71,40 @@ fun FinanceControll() {
         ) {
             Card(
                 modifier = Modifier
-                    .size(250.dp)
+                    .width(400.dp)
+                    .height(200.dp)
             ) {
                 Text(text = "Edite o gasto")
                 OutlinedTextField(
                     value = editingName,
                     onValueChange = { editingName = it }
                 )
-                Button(
-                    onClick = {
-                        editingIndex?.let { index ->
-                            lista[index] = lista[index].copy(nome = editingName)
+                OutlinedTextField(
+                    value = editingValor,
+                    onValueChange = { editingValor = it })
+                Row() {
+                    Button(
+                        onClick = {
+                            editingIndex?.let { index ->
+                                lista[index] = lista[index].copy(
+                                    nome = editingName,
+                                    valor = editingValor.toDouble()
+                                )
+                            }
+                            editDialogOpen = false
+                            editingName = ""
+                            editingValor = ""
                         }
-                        editDialogOpen = false
+                    ) {
+                        Text(text = "Salvar")
                     }
-                ) {
-                    Text(text = "Salvar")
-                }
-                Button(onClick = { editDialogOpen = false }) {
-                    Text(text = "Fechar")
+                    Button(onClick = {
+                        editDialogOpen = false
+                        editingName = ""
+                        editingValor = ""
+                    }) {
+                        Text(text = "Fechar")
+                    }
                 }
             }
         }
@@ -116,25 +136,32 @@ fun FinanceControll() {
         ) {
             Card(
                 modifier = Modifier
-                    .size(250.dp)
+                    .width(400.dp)
+                    .height(200.dp)
             ) {
                 Text("Adicione um gasto")
                 OutlinedTextField(
                     value = editingName,
                     onValueChange = { editingName = it }
                 )
-                Button(
-                    onClick = {
-                    lista.add(Gasto(nome = editingName));
-                    isDialogOpen = false;
-                    editingName = ""}
-                ) {
-                    Text(text = "Adicionar")
-                }
-                Button(
-                    onClick = { isDialogOpen = false }
-                ) {
-                    Text(text = "Fechar")
+                OutlinedTextField(
+                    value = editingValor,
+                    onValueChange = { editingValor = it }
+                )
+                Row() {
+                    Button(
+                        onClick = {
+                            lista.add(Gasto(nome = editingName, valor = editingValor.toDouble()));
+                            isDialogOpen = false;
+                            editingName = ""}
+                    ) {
+                        Text(text = "Adicionar")
+                    }
+                    Button(
+                        onClick = { isDialogOpen = false }
+                    ) {
+                        Text(text = "Fechar")
+                    }
                 }
             }
         }
