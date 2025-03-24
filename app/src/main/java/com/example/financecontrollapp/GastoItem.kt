@@ -23,12 +23,14 @@ import com.example.financecontrollapp.model.Gasto
 @Composable
 fun GastoItem(
     position: Int,
-    lista: MutableList<Gasto>,
+    lista: List<Gasto>,
     onDelete:() -> Unit,
     onEdit:() -> Unit
 ){
     val nome = lista[position].nome
     val valor = lista[position].valor;
+    val parcelado = lista[position].parcelado;
+    val parcelas = lista[position].parcelas;
 
     Card(
         modifier = Modifier
@@ -46,6 +48,8 @@ fun GastoItem(
             ) {
                 Text(text = nome.toString())
                 Text(text = valor.toString())
+                Text(text = "Parcelado: " + parcelado.toString())
+                Text(text = "Quantidade de parcelas: " + parcelas)
             }
             Column(
                 modifier = Modifier
