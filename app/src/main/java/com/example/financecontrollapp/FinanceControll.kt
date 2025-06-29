@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.financecontrollapp.model.Gasto
+import com.example.financecontrollapp.model.Expense
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,46 +44,46 @@ fun FinanceControll() {
     var isDialogOpen by remember { mutableStateOf(false) }
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     var editingName by remember { mutableStateOf("") }
-    var editingValor by remember { mutableStateOf("") }
-    var checado by remember { mutableStateOf(false) }
-    var qtdParcelas by remember { mutableStateOf(0) }
+    var editingValue by remember { mutableStateOf("") }
+    var checked by remember { mutableStateOf(false) }
+    var installmentsNumber by remember { mutableStateOf(0) }
     val months = listOf(
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     )
 
-    val lista = remember {
+    val list = remember {
         mutableStateListOf(
-            Gasto(nome = "Aluguel", valor = 2000.00, parcelado = false, parcelas = 1, mesInicio = months[2]),
-            Gasto(nome = "Carro", valor = 500.00, parcelado = false, parcelas = 1, mesInicio = months[2]),
-            Gasto(nome = "Internet", valor = 129.90, parcelado = false, parcelas = 1, mesInicio = months[2]),
-            Gasto(nome = "Cadeira", valor = 800.00, parcelado = true, parcelas = 4, mesInicio = months[2])
+            Expense(name = "Aluguel", value = 2000.00, installment = false, installments = 1, beginMonth = months[6]),
+            Expense(name = "Carro", value = 500.00, installment = false, installments = 1, beginMonth = months[6]),
+            Expense(name = "Internet", value = 129.90, installment = false, installments = 1, beginMonth = months[6]),
+            Expense(name = "Cadeira", value = 800.00, installment = true, installments = 4, beginMonth = months[6])
         )
     }
 
-    val listaFiltrada = lista.filter { gasto ->
+    val filtredList = list.filter { expense ->
         val selectedMonthIndex = months.indexOf(selectedMonth)
-        val firsMonthIndex = months.indexOf(gasto.mesInicio)
-        val lastMonthIndex = firsMonthIndex + gasto.parcelas-1
+        val firsMonthIndex = months.indexOf(expense.beginMonth)
+        val lastMonthIndex = firsMonthIndex + expense.installments-1
         if (firsMonthIndex < 0 || selectedMonthIndex < 0) return@filter false
         selectedMonthIndex >= firsMonthIndex && selectedMonthIndex <= lastMonthIndex
     }
 
     Column(){
-        Meses(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it })
+        Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it })
         LazyColumn {
-            itemsIndexed(listaFiltrada) { position, _ ->
-                GastoItem(
+            itemsIndexed(filtredList) { position, _ ->
+                ExpenseItem(
                     position,
-                    listaFiltrada,
-                    onDelete = { lista.removeAt(position) },
+                    filtredList,
+                    onDelete = { list.removeAt(position) },
                     onEdit = {
                         editDialogOpen = true
                         editingIndex = position
-                        editingName = lista[position].nome.toString()
-                        editingValor = lista[position].valor.toString()
-                        checado = lista[position].parcelado
-                        qtdParcelas = lista[position].parcelas
+                        editingName = list[position].name.toString()
+                        editingValue = list[position].value.toString()
+                        checked = list[position].installment
+                        installmentsNumber = list[position].installments
                     }
                 )
             }
@@ -105,23 +105,23 @@ fun FinanceControll() {
                     onValueChange = { editingName = it }
                 )
                 OutlinedTextField(
-                    value = editingValor,
-                    onValueChange = { editingValor = it })
-                Checkbox(checked = checado, onCheckedChange = {checado = it} )
-                Text(text = "Parcelas: $qtdParcelas")
+                    value = editingValue,
+                    onValueChange = { editingValue = it })
+                Checkbox(checked = checked, onCheckedChange = {checked = it} )
+                Text(text = "Parcelas: $installmentsNumber")
                 Row() {
                     Button(
                         onClick = {
                             editingIndex?.let { index ->
-                                lista[index] = lista[index].copy(
-                                    nome = editingName,
-                                    valor = editingValor.toDouble(),
-                                    parcelado = checado
+                                list[index] = list[index].copy(
+                                    name = editingName,
+                                    value = editingValue.toDouble(),
+                                    installment = checked
                                 )
                             }
                             editDialogOpen = false
                             editingName = ""
-                            editingValor = ""
+                            editingValue = ""
                         }
                     ) {
                         Text(text = "Salvar")
@@ -129,7 +129,7 @@ fun FinanceControll() {
                     Button(onClick = {
                         editDialogOpen = false
                         editingName = ""
-                        editingValor = ""
+                        editingValue = ""
                     }) {
                         Text(text = "Fechar")
                     }
@@ -168,22 +168,26 @@ fun FinanceControll() {
                     .height(300.dp)
             ) {
                 Text("Adicione um gasto")
+                Text("O que é o gasto")
                 OutlinedTextField(
                     value = editingName,
                     onValueChange = { editingName = it }
                 )
+                Text("Valor do gasto")
                 OutlinedTextField(
-                    value = editingValor,
-                    onValueChange = { editingValor = it }
+                    value = editingValue,
+                    onValueChange = { editingValue = it }
                 )
-                Checkbox(checked = checado, onCheckedChange = {checado = it} )
-                if(checado == true) {
-                    OutlinedTextField(value = qtdParcelas.toString(), onValueChange = {qtdParcelas = it.toInt()})
+                Text("Parcelado ou não")
+                Checkbox(checked = checked, onCheckedChange = {checked = it} )
+                if(checked == true) {
+                    Text("Quantidade de parcelas")
+                    OutlinedTextField(value = installmentsNumber.toString(), onValueChange = {installmentsNumber = it.toInt()})
                 }
                 Row() {
                     Button(
                         onClick = {
-                            lista.add(Gasto(nome = editingName, valor = editingValor.toDouble(), parcelado = checado, parcelas = qtdParcelas));
+                            list.add(Expense(name = editingName, value = editingValue.toDouble(), installment = checked, installments = installmentsNumber));
                             isDialogOpen = false;
                             editingName = ""}
                     ) {

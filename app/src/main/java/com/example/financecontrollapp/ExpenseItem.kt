@@ -18,19 +18,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.financecontrollapp.model.Gasto
+import com.example.financecontrollapp.model.Expense
 
 @Composable
-fun GastoItem(
+fun ExpenseItem(
     position: Int,
-    lista: List<Gasto>,
+    list: List<Expense>,
     onDelete:() -> Unit,
     onEdit:() -> Unit
 ){
-    val nome = lista[position].nome
-    val valor = lista[position].valor;
-    val parcelado = lista[position].parcelado;
-    val parcelas = lista[position].parcelas;
+    val name = list[position].name
+    val value = list[position].value;
+    val installment = list[position].installment;
+    val installments = list[position].installments;
 
     Card(
         modifier = Modifier
@@ -46,10 +46,10 @@ fun GastoItem(
                 modifier = Modifier
                     .padding(5.dp)
             ) {
-                Text(text = nome.toString())
-                Text(text = valor.toString())
-                Text(text = "Parcelado: " + parcelado.toString())
-                Text(text = "Quantidade de parcelas: " + parcelas)
+                Text(text = name.toString())
+                Text(text = value.toString())
+                Text(text = "Parcelado: " + installment.toString())
+                Text(text = "Quantidade de parcelas: " + installments)
             }
             Column(
                 modifier = Modifier

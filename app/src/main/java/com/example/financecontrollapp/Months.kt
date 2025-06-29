@@ -24,12 +24,12 @@ import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Meses(selectedMonth: String, onMonthSelected: (String) -> Unit) {
+fun Months(selectedMonth: String, onMonthSelected: (String) -> Unit) {
     val currentDate = LocalDate.now()
     val currentMonth = currentDate.monthValue
 
     val months = listOf(
-        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "January", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     )
 
