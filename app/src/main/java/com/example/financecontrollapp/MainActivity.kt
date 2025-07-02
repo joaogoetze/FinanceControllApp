@@ -1,6 +1,7 @@
 package com.example.financecontrollapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +26,19 @@ import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
+
+        Log.i(TAG, "Vai aparecer oua alguém vai morrer")
         super.onCreate(savedInstanceState)
         setContent {
             App()
         }
     }
+
+    companion object {
+        private val TAG = "Teste"
+    }
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

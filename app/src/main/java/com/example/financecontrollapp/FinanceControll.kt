@@ -1,6 +1,8 @@
 package com.example.financecontrollapp
 
+import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,18 +38,20 @@ import androidx.compose.ui.window.Dialog
 import com.example.financecontrollapp.model.Expense
 import java.time.LocalDate
 
+@SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FinanceControll() {
-
+    val TAG = "teste"
     var selectedMonth by remember { mutableStateOf(LocalDate.now().month.name.toLowerCase().capitalize())}
+    Log.i(TAG, "Mes selecionado " + selectedMonth)
     var editDialogOpen by remember { mutableStateOf(false) }
     var isDialogOpen by remember { mutableStateOf(false) }
     var editingIndex by remember { mutableStateOf<Int?>(null) }
     var editingName by remember { mutableStateOf("") }
     var editingValue by remember { mutableStateOf("") }
     var checked by remember { mutableStateOf(false) }
-    var installmentsNumber by remember { mutableStateOf(0) }
+    var installmentsNumber by remember { mutableStateOf("") }
     val months = listOf(
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
@@ -61,21 +66,30 @@ fun FinanceControll() {
         )
     }
 
-    val filtredList = list.filter { expense ->
-        val selectedMonthIndex = months.indexOf(selectedMonth)
-        val firsMonthIndex = months.indexOf(expense.beginMonth)
-        val lastMonthIndex = firsMonthIndex + expense.installments-1
-        if (firsMonthIndex < 0 || selectedMonthIndex < 0) return@filter false
-        selectedMonthIndex >= firsMonthIndex && selectedMonthIndex <= lastMonthIndex
+    val selectedMonthIndex = months.indexOf(selectedMonth)
+    //val  =
+
+    val filteredList by derivedStateOf {
+        list.filter { expense ->
+            if (expense.installment && expense.installments > 0) {
+                val firstMonthIndex = months.indexOf(expense.beginMonth)
+                val lastMonthIndex = firstMonthIndex + expense.installments - 1
+                selectedMonthIndex in firstMonthIndex..lastMonthIndex
+            } else {
+                expense.beginMonth == selectedMonth
+            }
+        }
     }
 
+
+
     Column(){
-        Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it })
+        Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it }, selectedMonthIndex = selectedMonthIndex)
         LazyColumn {
-            itemsIndexed(filtredList) { position, _ ->
+            itemsIndexed(filteredList) { position, _ ->
                 ExpenseItem(
                     position,
-                    filtredList,
+                    filteredList,
                     onDelete = { list.removeAt(position) },
                     onEdit = {
                         editDialogOpen = true
@@ -83,7 +97,7 @@ fun FinanceControll() {
                         editingName = list[position].name.toString()
                         editingValue = list[position].value.toString()
                         checked = list[position].installment
-                        installmentsNumber = list[position].installments
+                        installmentsNumber = list[position].installments.toString()
                     }
                 )
             }
@@ -159,13 +173,15 @@ fun FinanceControll() {
     }
 
     if(isDialogOpen) {
+        Log.d(TAG, "abrido")
+
         Dialog(
             onDismissRequest = { isDialogOpen = false }
         ) {
             Card(
                 modifier = Modifier
                     .width(400.dp)
-                    .height(300.dp)
+                    .height(400.dp)
             ) {
                 Text("Adicione um gasto")
                 Text("O que é o gasto")
@@ -181,16 +197,28 @@ fun FinanceControll() {
                 Text("Parcelado ou não")
                 Checkbox(checked = checked, onCheckedChange = {checked = it} )
                 if(checked == true) {
+                    Log.d(TAG, "Abriu campo de qtd de parcelas")
                     Text("Quantidade de parcelas")
-                    OutlinedTextField(value = installmentsNumber.toString(), onValueChange = {installmentsNumber = it.toInt()})
+                    OutlinedTextField(value = installmentsNumber.toString(), onValueChange = {installmentsNumber = it})
                 }
                 Row() {
-                    Button(
-                        onClick = {
-                            list.add(Expense(name = editingName, value = editingValue.toDouble(), installment = checked, installments = installmentsNumber));
-                            isDialogOpen = false;
-                            editingName = ""}
-                    ) {
+                    Button(onClick = {
+                        if(editingValue.isNotEmpty() && editingName.isNotEmpty()) {
+                            list.add(Expense(
+                                name = editingName,
+                                value = editingValue.toDouble(),
+                                installment = checked,
+                                installments = if (checked) installmentsNumber.toIntOrNull() ?: 1 else 1,
+                                beginMonth = months[selectedMonthIndex]
+                            ))
+                            Log.v(TAG, "Lista atualizada: " + list)
+                            isDialogOpen = false
+                            editingName = ""
+                            editingValue = ""
+                            checked = false
+                            installmentsNumber = ""
+                        }
+                    }) {
                         Text(text = "Adicionar")
                     }
                     Button(
