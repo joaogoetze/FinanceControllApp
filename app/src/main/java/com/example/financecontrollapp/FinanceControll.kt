@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -16,21 +14,24 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -38,6 +39,7 @@ import androidx.compose.ui.window.Dialog
 import com.example.financecontrollapp.model.Expense
 import java.time.LocalDate
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnrememberedMutableState")
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -67,7 +69,6 @@ fun FinanceControll() {
     }
 
     val selectedMonthIndex = months.indexOf(selectedMonth)
-    //val  =
 
     val filteredList by derivedStateOf {
         list.filter { expense ->
@@ -81,28 +82,51 @@ fun FinanceControll() {
         }
     }
 
-
-
-    Column(){
-        Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it }, selectedMonthIndex = selectedMonthIndex)
-        LazyColumn {
-            itemsIndexed(filteredList) { position, _ ->
-                ExpenseItem(
-                    position,
-                    filteredList,
-                    onDelete = { list.removeAt(position) },
-                    onEdit = {
-                        editDialogOpen = true
-                        editingIndex = position
-                        editingName = list[position].name.toString()
-                        editingValue = list[position].value.toString()
-                        checked = list[position].installment
-                        installmentsNumber = list[position].installments.toString()
+    Scaffold(
+        bottomBar = {
+            BottomAppBar(
+                actions = {},
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { isDialogOpen = true },
+                        containerColor = Color(0xFF206D00),
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                        shape = RoundedCornerShape(30.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add expense",
+                            tint = Color.White
+                        )
                     }
-                )
+                },
+            )
+        },
+        content = { padding ->
+            Column(
+                modifier = Modifier.padding(padding)
+            ){
+                Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it }, selectedMonthIndex = selectedMonthIndex)
+                LazyColumn {
+                    itemsIndexed(filteredList) { position, _ ->
+                        ExpenseItem(
+                            position,
+                            filteredList,
+                            onDelete = { list.removeAt(position) },
+                            onEdit = {
+                                editDialogOpen = true
+                                editingIndex = position
+                                editingName = list[position].name.toString()
+                                editingValue = list[position].value.toString()
+                                checked = list[position].installment
+                                installmentsNumber = list[position].installments.toString()
+                            }
+                        )
+                    }
+                }
             }
         }
-    }
+    )
 
     if (editDialogOpen) {
         Dialog(
@@ -152,29 +176,7 @@ fun FinanceControll() {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(end = 10.dp, bottom = 10.dp),
-        horizontalAlignment = Alignment.End,
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        FloatingActionButton(
-            onClick = { isDialogOpen = true },
-            shape = RoundedCornerShape(30.dp),
-            containerColor =  Color(0xFF206D00),
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = null,
-                tint = Color.White
-            )
-        }
-    }
-
     if(isDialogOpen) {
-        Log.d(TAG, "abrido")
-
         Dialog(
             onDismissRequest = { isDialogOpen = false }
         ) {
