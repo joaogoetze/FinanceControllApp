@@ -67,7 +67,7 @@ fun Home(navController: NavController) {
             onClick = { navController.navigate("finaceControll") },
             colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF206D00))
         ) {
-            Text(text = "Controle Financeiro")
+            Text(text = "Controle de Gastos")
         }
     }
 }

@@ -44,9 +44,8 @@ import java.time.LocalDate
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun FinanceControll() {
-    val TAG = "teste"
     var selectedMonth by remember { mutableStateOf(LocalDate.now().month.name.toLowerCase().capitalize())}
-    Log.i(TAG, "Mes selecionado " + selectedMonth)
+
     var editDialogOpen by remember { mutableStateOf(false) }
     var isDialogOpen by remember { mutableStateOf(false) }
     var editingIndex by remember { mutableStateOf<Int?>(null) }
@@ -82,6 +81,21 @@ fun FinanceControll() {
         }
     }
 
+    var totalValue = 0.0
+    var index = 0
+    val TAG = "TESTE"
+
+    Log.i(TAG, "Lista: " + filteredList)
+
+        while (index < filteredList.size) {
+            totalValue += filteredList[index].value
+            index++
+        }
+
+
+    Log.i(TAG, "valor total: " + totalValue)
+
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -101,6 +115,7 @@ fun FinanceControll() {
                     }
                 },
             )
+            Text(text = "Valor total: " + totalValue)
         },
         content = { padding ->
             Column(
@@ -199,7 +214,7 @@ fun FinanceControll() {
                 Text("Parcelado ou não")
                 Checkbox(checked = checked, onCheckedChange = {checked = it} )
                 if(checked == true) {
-                    Log.d(TAG, "Abriu campo de qtd de parcelas")
+
                     Text("Quantidade de parcelas")
                     OutlinedTextField(value = installmentsNumber.toString(), onValueChange = {installmentsNumber = it})
                 }
@@ -213,7 +228,7 @@ fun FinanceControll() {
                                 installments = if (checked) installmentsNumber.toIntOrNull() ?: 1 else 1,
                                 beginMonth = months[selectedMonthIndex]
                             ))
-                            Log.v(TAG, "Lista atualizada: " + list)
+
                             isDialogOpen = false
                             editingName = ""
                             editingValue = ""
