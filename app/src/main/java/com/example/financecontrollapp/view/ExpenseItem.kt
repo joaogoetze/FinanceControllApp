@@ -1,4 +1,4 @@
-package com.example.financecontrollapp
+package com.example.financecontrollapp.view
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

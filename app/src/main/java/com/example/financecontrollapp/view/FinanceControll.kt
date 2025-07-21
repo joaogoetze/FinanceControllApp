@@ -1,4 +1,4 @@
-package com.example.financecontrollapp
+package com.example.financecontrollapp.view
 
 import android.annotation.SuppressLint
 import android.os.Build
@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.example.financecontrollapp.model.Expense
+import com.example.financecontrollapp.ui.theme.MainCollor
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,28 +101,34 @@ fun FinanceControll() {
         bottomBar = {
             BottomAppBar(
                 actions = {},
-                floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = { isDialogOpen = true },
-                        containerColor = Color(0xFF206D00),
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
-                        shape = RoundedCornerShape(30.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = "Add expense",
-                            tint = Color.White
-                        )
-                    }
-                },
+                modifier = Modifier
+                    .height(50.dp)
             )
             Text(text = "Valor total: " + totalValue)
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { isDialogOpen = true },
+                containerColor = MainCollor,
+                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(),
+                shape = RoundedCornerShape(30.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add expense",
+                    tint = Color.White
+                )
+            }
         },
         content = { padding ->
             Column(
                 modifier = Modifier.padding(padding)
             ){
-                Months(selectedMonth = selectedMonth, onMonthSelected = { selectedMonth = it }, selectedMonthIndex = selectedMonthIndex)
+                Months(
+                    selectedMonth = selectedMonth,
+                    onMonthSelected = { selectedMonth = it },
+                    selectedMonthIndex = selectedMonthIndex
+                )
                 LazyColumn {
                     itemsIndexed(filteredList) { position, _ ->
                         ExpenseItem(

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -20,6 +19,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.financecontrollapp.ui.theme.MainCollor
+import com.example.financecontrollapp.view.FinanceControll
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +66,7 @@ fun Home(navController: NavController) {
     ){
         Button(
             onClick = { navController.navigate("finaceControll") },
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF206D00))
+            colors = ButtonDefaults.buttonColors(containerColor = MainCollor)
         ) {
             Text(text = "Controle de Gastos")
         }

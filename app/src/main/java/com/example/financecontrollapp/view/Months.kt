@@ -1,7 +1,6 @@
-package com.example.financecontrollapp
+package com.example.financecontrollapp.view
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.financecontrollapp.ui.theme.MainCollor
 import java.time.LocalDate
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -31,13 +31,10 @@ fun Months(selectedMonth: String, onMonthSelected: (String) -> Unit, selectedMon
     val currentDate = LocalDate.now()
     val currentMonth = currentDate.monthValue
 
-    val TAG = "EAE"
-
     val months = listOf(
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     )
-
 
     val reorderedMonths = months.subList(currentMonth - 1, months.size) + months.subList(0, currentMonth - 1)
 
@@ -51,7 +48,6 @@ fun Months(selectedMonth: String, onMonthSelected: (String) -> Unit, selectedMon
         contentPadding = PaddingValues(horizontal = 10.dp)
     ) {
         items(reorderedMonths) { month ->
-            Log.d(TAG, "mes: " + month)
             Card(
                 modifier = Modifier
                     .width(100.dp)
@@ -59,7 +55,7 @@ fun Months(selectedMonth: String, onMonthSelected: (String) -> Unit, selectedMon
                     .padding(5.dp)
                     .clickable { onMonthSelected(month) },
                 colors = CardDefaults.cardColors(
-                    contentColor = if (selectedMonth == month) Color.Gray else Color.White
+                    contentColor = if (selectedMonth == month) MainCollor else Color.White
                 )
             ) {
                 Column(
